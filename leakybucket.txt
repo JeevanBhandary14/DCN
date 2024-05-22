@@ -1,0 +1,42 @@
+check if this works for leaky bucket #include<stdio.h>
+
+int main() {
+    int interval, filled = 0, freespace, size[30], time[30];
+    int bucketsize, outrate, n;
+
+    printf("Enter bucket size, out rate, interval, and number of packets: ");
+    scanf("%d%d%d%d", &bucketsize, &outrate, &interval, &n);
+    freespace = bucketsize;  
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter time and size of process %d: ", i + 1);
+        scanf("%d%d", &time[i], &size[i]);
+    }
+
+    printf("\nOPERATION\ttime\tfill\tfreespace");
+
+    int index = 0;
+    for (int t = 1;; t++) {
+        if (t % interval == 0) {
+            filled -= outrate;
+            freespace += outrate;
+            printf("\nREMOVE\t%d\t%d\t%d", t, filled, freespace);
+            if(filled<=0)
+                break;
+        } 
+         else if (t == time[index]) {
+            filled += size[index];
+            freespace -= size[index];
+            if(filled>bucketsize)
+            {
+                 printf("\nINSERT\t%d\toverflow", t);
+                 filled-=size[index];
+                 freespace+=size[index];
+                 index++;
+                 continue;
+            }
+            printf("\nINSERT\t%d\t%d\t%d", t, filled, freespace);
+            index++;
+        }
+    }
+}
